@@ -319,6 +319,24 @@
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
+            scroll-behavior: smooth;
+        }
+
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: #181818;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: #777;
         }
 
         .modal-close {
@@ -400,6 +418,97 @@
 
         .modal-sidebar span {
             color: #777;
+        }
+
+        .more-like-this {
+            margin-top: 40px;
+        }
+
+        .more-like-this h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .more-like-this-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .more-like-card {
+            background: #2f2f2f;
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .more-like-card:hover {
+            background: #3f3f3f;
+        }
+
+        .more-like-card img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .more-like-card-body {
+            padding: 15px;
+        }
+
+        .more-like-card-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+        }
+
+        .more-like-card-desc {
+            font-size: 0.85rem;
+            color: #aaa;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .modal-btn-round {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.5);
+            background: transparent;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .modal-btn-round:hover {
+            border-color: #fff;
+            background: rgba(255,255,255,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .more-like-this-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .modal-details {
+                flex-direction: column;
+            }
         }
 
         /* Footer */
@@ -976,9 +1085,11 @@
                 <div class="modal-hero-fade"></div>
                 <div class="modal-hero-content">
                     <h2 class="modal-hero-title" id="modal-title">Movie Title</h2>
-                    <div class="hero-buttons">
+                    <div class="modal-buttons">
                         <button class="btn btn-play">&#9658; Play</button>
-                        <button class="btn btn-info" style="background: transparent; border: 2px solid #fff;">+ My List</button>
+                        <button class="modal-btn-round" title="Add to My List">+</button>
+                        <button class="modal-btn-round" title="Like">&#128077;</button>
+                        <button class="modal-btn-round" title="Not for me">&#128078;</button>
                     </div>
                 </div>
             </div>
@@ -1000,6 +1111,12 @@
                         <p><span>Cast:</span> <span id="modal-cast">Pug McPugface, Sir Snortsalot, Lady Wrinkles</span></p>
                         <p><span>Genres:</span> <span id="modal-genres">Comedy, Drama, Pug</span></p>
                         <p><span>This movie is:</span> <span id="modal-mood">Heartwarming, Snore-inducing, Adorable</span></p>
+                    </div>
+                </div>
+                <div class="more-like-this">
+                    <h3>More Like This</h3>
+                    <div class="more-like-this-grid" id="more-like-this-grid">
+                        <!-- Populated by JavaScript -->
                     </div>
                 </div>
             </div>
@@ -1158,12 +1275,337 @@
                 cast: "Macaulay Pugkin, Joe Pesci-paw, Daniel Sterndog",
                 genres: "Comedy, Family, Holiday Pugs",
                 mood: "Festive, Clever, Family Fun"
+            },
+            {
+                title: "Puggy Gilmore",
+                description: "A rejected hockey pug discovers he has an incredible golf swing. He joins the PGA Tour to win enough money to save his grandmother's house, but first must defeat his rival, Shooter McPuggin.",
+                image: "https://images.unsplash.com/photo-1588943211346-0908a1fb0b01?w=1200&q=80",
+                match: "88%",
+                year: "1996",
+                rating: "PG-13",
+                duration: "1h 32m",
+                cast: "Adam Sandpug, Christopher McPugald, Julie Bowendog",
+                genres: "Comedy, Sports, Golf Pugs",
+                mood: "Silly, Quotable, 90s Classic"
+            },
+            {
+                title: "Superpug",
+                description: "Two pugs from Hawaii accidentally witness a crime and must enter the witness protection program, leading them to Minnesota where they must adapt to cold weather and weird casseroles.",
+                image: "https://images.unsplash.com/photo-1583512603805-3cc6b41f3edb?w=1200&q=80",
+                match: "85%",
+                year: "2007",
+                rating: "R",
+                duration: "1h 53m",
+                cast: "Jonah Hillpug, Michael Cerapug, Seth Rogen-dog",
+                genres: "Comedy, Coming-of-Age, Party Pugs",
+                mood: "Hilarious, Raunchy, Nostalgic"
+            },
+            {
+                title: "Mission Impugssible",
+                description: "When a pug secret agent is framed for the murder of his team, he goes rogue to prove his innocence. Features the iconic scene of a pug dangling from a ceiling by a treat.",
+                image: "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?w=1200&q=80",
+                match: "97%",
+                year: "1996",
+                rating: "PG-13",
+                duration: "2h 27m",
+                cast: "Tom Pugise, Jon Voightdog, Ving Rhames-pug",
+                genres: "Action, Spy, Impossible Pugs",
+                mood: "Thrilling, Iconic, Edge-of-your-seat"
+            },
+            {
+                title: "James Bone: Goldenpug",
+                description: "British secret agent James Bone must stop a Russian crime syndicate from using a satellite weapon. Features martinis (shaken, not stirred) and lots of belly rubs.",
+                image: "https://images.unsplash.com/photo-1558788353-f76d92427f16?w=1200&q=80",
+                match: "94%",
+                year: "1995",
+                rating: "PG-13",
+                duration: "2h 10m",
+                cast: "Pierce Brosnpug, Sean Bean-dog, Judi Denchpug",
+                genres: "Action, Spy, Suave Pugs",
+                mood: "Sophisticated, Action-Packed, Classic"
+            },
+            {
+                title: "The Pug Identity",
+                description: "A pug with amnesia must discover who he is while being hunted by assassins. All he knows is that he has incredible fighting skills and a love for squeaky toys.",
+                image: "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?w=1200&q=80",
+                match: "92%",
+                year: "2002",
+                rating: "PG-13",
+                duration: "1h 59m",
+                cast: "Matt Damondog, Franka Pupente, Chris Cooperpug",
+                genres: "Action, Thriller, Spy Pugs",
+                mood: "Intense, Gripping, Mysterious"
+            },
+            {
+                title: "Die Hard with a Pug",
+                description: "A New York pug cop visits his wife at a holiday party in a Los Angeles high-rise when terrorists take over the building. Yippee-ki-yay, pupper lovers.",
+                image: "https://images.unsplash.com/photo-1561037404-61cd46aa615b?w=1200&q=80",
+                match: "96%",
+                year: "1988",
+                rating: "R",
+                duration: "2h 12m",
+                cast: "Bruce Willispug, Alan Rickpug, Bonnie Bedelia-dog",
+                genres: "Action, Christmas, One-Pug-Army",
+                mood: "Explosive, Quotable, Holiday Classic"
+            },
+            {
+                title: "Mad Max: Fury Pug",
+                description: "In a post-apocalyptic wasteland, a mysterious drifter pug joins forces with a group of rebels fleeing a tyrannical warlord. Features incredible car chases and dramatic sniffing.",
+                image: "https://images.unsplash.com/photo-1477884213360-7e9d7dcc1e48?w=1200&q=80",
+                match: "98%",
+                year: "2015",
+                rating: "R",
+                duration: "2h 0m",
+                cast: "Tom Hardypug, Charlize Therondog, Nicholas Houltpug",
+                genres: "Action, Sci-Fi, Apocalypse Pugs",
+                mood: "Relentless, Stunning, Masterpiece"
+            },
+            {
+                title: "Puginator 2",
+                description: "A reprogrammed robot pug is sent back in time to protect a young pup who will one day lead the resistance against machines. Hasta la vista, puppy.",
+                image: "https://images.unsplash.com/photo-1534361960057-19889db9621e?w=1200&q=80",
+                match: "95%",
+                year: "1991",
+                rating: "R",
+                duration: "2h 17m",
+                cast: "Arnold Schwarzenpugger, Linda Hamiltondog, Edward Furlongpug",
+                genres: "Action, Sci-Fi, Robot Pugs",
+                mood: "Iconic, Action-Packed, Emotional"
+            },
+            {
+                title: "Schindler's Pug List",
+                description: "The true story of a pug who saved hundreds of shelter dogs during a time of great peril by employing them in his treat factory. A powerful tale of compassion.",
+                image: "https://images.unsplash.com/photo-1523626797181-8c5ae80d40c2?w=1200&q=80",
+                match: "99%",
+                year: "1993",
+                rating: "R",
+                duration: "3h 15m",
+                cast: "Liam Neesepug, Ben Kingsleydog, Ralph Fiennespug",
+                genres: "Drama, Historical, Moving Pugs",
+                mood: "Powerful, Heartbreaking, Important"
+            },
+            {
+                title: "Forrest Pug",
+                description: "The story of a simple pug with a big heart who inadvertently influences major historical events while searching for his one true love and the perfect belly rub.",
+                image: "https://images.unsplash.com/photo-1586671267731-da2cf3ceeb80?w=1200&q=80",
+                match: "97%",
+                year: "1994",
+                rating: "PG-13",
+                duration: "2h 22m",
+                cast: "Tom Hankspug, Robin Wrightdog, Gary Sinisepug",
+                genres: "Drama, Romance, Life Story Pugs",
+                mood: "Heartwarming, Inspiring, Classic"
+            },
+            {
+                title: "The Social Pugwork",
+                description: "The story of how a Harvard pug created a social network for dogs that changed the world, and the friendships he lost along the way.",
+                image: "https://images.unsplash.com/photo-1560807707-8cc77767d783?w=1200&q=80",
+                match: "94%",
+                year: "2010",
+                rating: "PG-13",
+                duration: "2h 0m",
+                cast: "Jesse Eisenpug, Andrew Garfielddog, Justin Timberpug",
+                genres: "Drama, Tech, Startup Pugs",
+                mood: "Sharp, Compelling, Modern"
+            },
+            {
+                title: "A Beautiful Pug Mind",
+                description: "A brilliant but socially awkward pug mathematician makes groundbreaking discoveries while battling personal demons and chasing squirrels only he can see.",
+                image: "https://images.unsplash.com/photo-1591769225440-811ad7d6eab3?w=1200&q=80",
+                match: "96%",
+                year: "2001",
+                rating: "PG-13",
+                duration: "2h 15m",
+                cast: "Russell Crowepug, Jennifer Connellydog, Ed Harrispug",
+                genres: "Drama, Biography, Genius Pugs",
+                mood: "Moving, Inspiring, Beautiful"
+            },
+            {
+                title: "The Pug of Wall Street",
+                description: "Based on the true story of a pug stockbroker who rose to enormous wealth through questionable means, featuring excessive treat consumption and yacht parties.",
+                image: "https://images.unsplash.com/photo-1525253086316-d0c936c814f8?w=1200&q=80",
+                match: "93%",
+                year: "2013",
+                rating: "R",
+                duration: "2h 59m",
+                cast: "Leonardo DiPugrio, Jonah Hillpug, Margot Robbiedog",
+                genres: "Drama, Crime, Finance Pugs",
+                mood: "Excessive, Wild, Cautionary"
+            },
+            {
+                title: "Citizen Pug",
+                description: "A reporter investigates the life of a wealthy pug media tycoon, trying to discover the meaning of his last word: 'Rosebud' - his favorite squeaky toy.",
+                image: "https://images.unsplash.com/photo-1550165703-b0c3a6d19fd4?w=1200&q=80",
+                match: "98%",
+                year: "1941",
+                rating: "PG",
+                duration: "1h 59m",
+                cast: "Orson Wellespug, Joseph Cottendog, Dorothy Comingpug",
+                genres: "Drama, Mystery, Classic Pugs",
+                mood: "Groundbreaking, Mysterious, Timeless"
+            },
+            {
+                title: "Star Paws: A New Hope",
+                description: "A young farm pug discovers he's destined for greatness when he joins a rebellion against the evil Galactic Empire and learns the ways of the Force.",
+                image: "https://images.unsplash.com/photo-1583511655826-05700d52f4d9?w=1200&q=80",
+                match: "97%",
+                year: "1977",
+                rating: "PG",
+                duration: "2h 1m",
+                cast: "Mark Hamillpug, Harrison Forddog, Carrie Fisherpug",
+                genres: "Sci-Fi, Adventure, Space Pugs",
+                mood: "Epic, Adventurous, Legendary"
+            },
+            {
+                title: "The Pug-trix",
+                description: "A computer hacker pug learns that reality is a simulation and he's the chosen one destined to free all dogs from their machine overlords. Take the red treat.",
+                image: "https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?w=1200&q=80",
+                match: "96%",
+                year: "1999",
+                rating: "R",
+                duration: "2h 16m",
+                cast: "Keanu Reevespug, Laurence Fishburndog, Carrie-Anne Mosspug",
+                genres: "Sci-Fi, Action, Mind-Bending Pugs",
+                mood: "Revolutionary, Philosophical, Cool"
+            },
+            {
+                title: "Interpugstellar",
+                description: "A team of explorer pugs travels through a wormhole in search of a new home for dogkind. Time dilation means one hour on a water planet equals seven years of missed belly rubs.",
+                image: "https://images.unsplash.com/photo-1510771463146-e89e6e86560e?w=1200&q=80",
+                match: "99%",
+                year: "2014",
+                rating: "PG-13",
+                duration: "2h 49m",
+                cast: "Matthew McConaugheypug, Anne Hathawaydog, Jessica Chastainpug",
+                genres: "Sci-Fi, Drama, Space Pugs",
+                mood: "Mind-Blowing, Emotional, Epic"
+            },
+            {
+                title: "Blade Pugger 2049",
+                description: "A young blade pugger uncovers a long-buried secret that leads him on a quest to find a former blade pugger who's been missing for thirty years.",
+                image: "https://images.unsplash.com/photo-1592754862816-1a21a4ea2281?w=1200&q=80",
+                match: "95%",
+                year: "2017",
+                rating: "R",
+                duration: "2h 44m",
+                cast: "Ryan Goslingpug, Harrison Forddog, Ana de Armaspug",
+                genres: "Sci-Fi, Neo-Noir, Replicant Pugs",
+                mood: "Stunning, Philosophical, Atmospheric"
+            },
+            {
+                title: "E.T. the Extra-Pugrestrial",
+                description: "A gentle alien pug is stranded on Earth and befriends a young boy. Together they must evade government agents while finding a way for E.T. to phone home.",
+                image: "https://images.unsplash.com/photo-1530041539828-114de669390e?w=1200&q=80",
+                match: "94%",
+                year: "1982",
+                rating: "PG",
+                duration: "1h 55m",
+                cast: "Henry Thomaspug, Drew Barrymoredog, Dee Wallacepug",
+                genres: "Sci-Fi, Family, Alien Pugs",
+                mood: "Heartwarming, Magical, Tearjerker"
+            },
+            {
+                title: "Pug-ception",
+                description: "A skilled thief pug who steals secrets from dreams is offered a chance at redemption: plant an idea in someone's mind. Dreams within dreams within naps.",
+                image: "https://images.unsplash.com/photo-1568572933382-74d440642117?w=1200&q=80",
+                match: "98%",
+                year: "2010",
+                rating: "PG-13",
+                duration: "2h 28m",
+                cast: "Leonardo DiPugrio, Joseph Gordon-Levittdog, Ellen Pagepug",
+                genres: "Sci-Fi, Thriller, Dream Pugs",
+                mood: "Mind-Bending, Complex, Brilliant"
+            },
+            {
+                title: "Opugheimer",
+                description: "The story of J. Robert Opugheimer, the theoretical physicist who led the development of the atomic bone. A tale of genius, guilt, and the pursuit of the ultimate fetch.",
+                image: "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=1200&q=80",
+                match: "99%",
+                year: "2023",
+                rating: "R",
+                duration: "3h 0m",
+                cast: "Cillian Murphypug, Emily Bluntdog, Robert Downey Jr. Pug",
+                genres: "Drama, Biography, Historical Pugs",
+                mood: "Intense, Haunting, Masterful"
+            },
+            {
+                title: "Poor Pugs",
+                description: "A young pug is brought back to life by an unorthodox scientist and must experience the world anew, discovering treats, belly rubs, and the complexities of existence.",
+                image: "https://images.unsplash.com/photo-1529927066849-79b791a69825?w=1200&q=80",
+                match: "97%",
+                year: "2023",
+                rating: "R",
+                duration: "2h 21m",
+                cast: "Emma Stonepug, Mark Ruffalodog, Willem Dafoepug",
+                genres: "Drama, Fantasy, Philosophical Pugs",
+                mood: "Bizarre, Beautiful, Unforgettable"
+            },
+            {
+                title: "The Holdovers: Pug Edition",
+                description: "A grumpy prep school teacher pug must stay on campus during Christmas break with a troubled student, forming an unlikely bond over detention and holiday loneliness.",
+                image: "https://images.unsplash.com/photo-1541364983171-a8ba01e95cfc?w=1200&q=80",
+                match: "96%",
+                year: "2023",
+                rating: "R",
+                duration: "2h 13m",
+                cast: "Paul Giamattipug, Da'Vine Joy Randolphdog, Dominic Sessapug",
+                genres: "Drama, Comedy, Holiday Pugs",
+                mood: "Touching, Funny, Heartfelt"
+            },
+            {
+                title: "Anatomy of a Pug Fall",
+                description: "A writer pug is accused of murdering her husband, and their visually impaired son's testimony becomes crucial. A gripping courtroom drama about truth and perception.",
+                image: "https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=1200&q=80",
+                match: "95%",
+                year: "2023",
+                rating: "R",
+                duration: "2h 32m",
+                cast: "Sandra Hüllerpug, Swann Arlauddog, Milo Machado Granerpug",
+                genres: "Drama, Thriller, Courtroom Pugs",
+                mood: "Gripping, Complex, Thought-Provoking"
+            },
+            {
+                title: "Barkie",
+                description: "The iconic pug doll comes to life and discovers that being a pug in the real world is harder than expected. Meanwhile, Ken just wants to be noticed.",
+                image: "https://images.unsplash.com/photo-1575425186775-b8de9a427e67?w=1200&q=80",
+                match: "94%",
+                year: "2023",
+                rating: "PG-13",
+                duration: "1h 54m",
+                cast: "Margot Robbiepug, Ryan Goslingdog, America Ferrerapug",
+                genres: "Comedy, Fantasy, Pink Pugs",
+                mood: "Fun, Smart, Empowering"
+            },
+            {
+                title: "Killers of the Flower Pug",
+                description: "Members of the Osage pug nation are being murdered one by one after oil is discovered on their land. A young FBI agent investigates the conspiracy.",
+                image: "https://images.unsplash.com/photo-1521673461164-de300ebcfb17?w=1200&q=80",
+                match: "98%",
+                year: "2023",
+                rating: "R",
+                duration: "3h 26m",
+                cast: "Leonardo DiPugrio, Robert De Nirodog, Lily Gladstone Pug",
+                genres: "Drama, Crime, Historical Pugs",
+                mood: "Epic, Devastating, Important"
             }
         ];
 
+        // Create a lookup map for movies by title
+        const moviesByTitle = {};
+        movies.forEach(movie => {
+            moviesByTitle[movie.title] = movie;
+        });
+
         // Modal functions
-        function openModal(index) {
-            const movie = movies[index];
+        function openModal(movieOrIndex) {
+            let movie;
+            if (typeof movieOrIndex === 'number') {
+                movie = movies[movieOrIndex];
+            } else {
+                movie = movieOrIndex;
+            }
+            if (!movie) return;
+
             document.getElementById('modal-title').textContent = movie.title;
             document.getElementById('modal-description').textContent = movie.description;
             document.getElementById('modal-hero').style.backgroundImage = `linear-gradient(to right, rgba(24,24,24,0.9) 0%, rgba(24,24,24,0.4) 100%), url('${movie.image}')`;
@@ -1174,8 +1616,32 @@
             document.getElementById('modal-cast').textContent = movie.cast;
             document.getElementById('modal-genres').textContent = movie.genres;
             document.getElementById('modal-mood').textContent = movie.mood;
+
+            // Populate "More Like This" section with random movies (excluding current)
+            const otherMovies = movies.filter(m => m.title !== movie.title);
+            const shuffled = otherMovies.sort(() => 0.5 - Math.random());
+            const moreLikeThis = shuffled.slice(0, 6);
+
+            const moreLikeThisGrid = document.getElementById('more-like-this-grid');
+            moreLikeThisGrid.innerHTML = moreLikeThis.map(m => `
+                <div class="more-like-card" onclick="openModal(moviesByTitle['${m.title.replace(/'/g, "\\'")}'])">
+                    <img src="${m.image.replace('w=1200', 'w=400')}" alt="${m.title}">
+                    <div class="more-like-card-body">
+                        <div class="more-like-card-meta">
+                            <span class="match">${m.match} Match</span>
+                            <span class="rating">${m.rating}</span>
+                            <span>${m.duration}</span>
+                        </div>
+                        <div class="more-like-card-desc">${m.description.substring(0, 120)}...</div>
+                    </div>
+                </div>
+            `).join('');
+
             document.getElementById('modal').classList.add('active');
             document.body.style.overflow = 'hidden';
+
+            // Scroll modal to top
+            document.querySelector('.modal-content').scrollTop = 0;
         }
 
         function closeModal() {
@@ -1194,6 +1660,38 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeModal();
+            }
+        });
+
+        // Auto-attach click handlers to all movie cards
+        document.querySelectorAll('.movie-card').forEach(card => {
+            // Skip if already has onclick
+            if (card.getAttribute('onclick')) return;
+
+            const titleEl = card.querySelector('.movie-title');
+            if (titleEl) {
+                const title = titleEl.textContent.trim();
+                const movie = moviesByTitle[title];
+                if (movie) {
+                    card.style.cursor = 'pointer';
+                    card.addEventListener('click', () => openModal(movie));
+                }
+            }
+        });
+
+        // Handle Top 10 cards (they use images, need to map by image URL)
+        const top10Movies = [
+            movies[0], // Pug Fiction
+            movies[1], // The Dark Pug Rises
+            movies[2], // Jurassic Pug
+            movies[3], // The Pugshank Redemption
+            movies[4], // Avengers: Endpug
+            movies[5]  // Pug-neto
+        ];
+        document.querySelectorAll('.top-10 .movie-card').forEach((card, index) => {
+            if (top10Movies[index]) {
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', () => openModal(top10Movies[index]));
             }
         });
     </script>
