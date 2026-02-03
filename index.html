@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pugflix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #141414;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, transparent 100%);
+            transition: background-color 0.3s;
+        }
+
+        .navbar.scrolled {
+            background-color: #141414;
+        }
+
+        .logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            color: #e50914;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .logo span {
+            color: #fff;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #e5e5e5;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #b3b3b3;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .search-icon, .bell-icon {
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .profile {
+            width: 35px;
+            height: 35px;
+            border-radius: 4px;
+            background: linear-gradient(135deg, #e50914, #b20710);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 90vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 0 60px;
+            background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%),
+                        url('https://images.unsplash.com/photo-1517849845537-4d257902454a?w=1920&q=80') center/cover no-repeat;
+        }
+
+        .hero-content {
+            max-width: 500px;
+            z-index: 10;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+        }
+
+        .hero-description {
+            font-size: 1.2rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            color: #ddd;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+
+        .btn-play {
+            background: #fff;
+            color: #000;
+        }
+
+        .btn-play:hover {
+            background: #e6e6e6;
+        }
+
+        .btn-info {
+            background: rgba(109, 109, 110, 0.7);
+            color: #fff;
+        }
+
+        .btn-info:hover {
+            background: rgba(109, 109, 110, 0.5);
+        }
+
+        .hero-fade {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: linear-gradient(to top, #141414 0%, transparent 100%);
+        }
+
+        /* Content Rows */
+        .content-section {
+            padding: 0 60px;
+            margin-top: -100px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .row {
+            margin-bottom: 40px;
+        }
+
+        .row-title {
+            font-size: 1.4rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .row-title .explore {
+            font-size: 0.8rem;
+            color: #54b9c5;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .row:hover .explore {
+            opacity: 1;
+        }
+
+        .movies-container {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding-bottom: 20px;
+        }
+
+        .movies-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .movie-card {
+            min-width: 240px;
+            height: 135px;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s, z-index 0.3s;
+        }
+
+        .movie-card:hover {
+            transform: scale(1.3);
+            z-index: 100;
+        }
+
+        .movie-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .movie-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px;
+            background: linear-gradient(to top, rgba(20,20,20,1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .movie-card:hover .movie-info {
+            opacity: 1;
+        }
+
+        .movie-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .movie-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+        }
+
+        .match {
+            color: #46d369;
+            font-weight: 600;
+        }
+
+        .rating {
+            border: 1px solid #fff;
+            padding: 0 5px;
+            font-size: 0.65rem;
+        }
+
+        /* Top 10 Row */
+        .top-10 .movie-card {
+            min-width: 180px;
+            display: flex;
+            align-items: center;
+        }
+
+        .top-10 .rank {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 8rem;
+            color: transparent;
+            -webkit-text-stroke: 3px #808080;
+            margin-right: -30px;
+            z-index: 1;
+        }
+
+        .top-10 .movie-card img {
+            width: 130px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #181818;
+            border-radius: 8px;
+            max-width: 850px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #181818;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .modal-hero {
+            height: 400px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .modal-hero-fade {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            background: linear-gradient(to top, #181818 0%, transparent 100%);
+        }
+
+        .modal-hero-content {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+        }
+
+        .modal-hero-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .modal-body {
+            padding: 0 40px 40px;
+        }
+
+        .modal-details {
+            display: flex;
+            gap: 30px;
+        }
+
+        .modal-main {
+            flex: 2;
+        }
+
+        .modal-sidebar {
+            flex: 1;
+        }
+
+        .modal-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .modal-description {
+            line-height: 1.6;
+            color: #ddd;
+        }
+
+        .modal-sidebar p {
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .modal-sidebar span {
+            color: #777;
+        }
+
+        /* Footer */
+        footer {
+            padding: 60px;
+            color: #808080;
+        }
+
+        .footer-links {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .footer-links a {
+            color: #808080;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .service-code {
+            font-size: 12px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 0 20px;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .content-section {
+                padding: 0 20px;
+            }
+
+            .movie-card {
+                min-width: 150px;
+                height: 85px;
+            }
+
+            .movie-card:hover {
+                transform: scale(1.1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div style="display: flex; align-items: center; gap: 40px;">
+            <div class="logo">PUG<span>FLIX</span></div>
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Pug Series</a></li>
+                <li><a href="#">Pug Movies</a></li>
+                <li><a href="#">New & Popular</a></li>
+                <li><a href="#">My List</a></li>
+                <li><a href="#">Browse by Breed</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <span class="search-icon">&#128269;</span>
+            <span class="bell-icon">&#128276;</span>
+            <div class="profile">&#128054;</div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">The Pug Father</h1>
+            <p class="hero-description">In this epic crime saga, Don Puggleone must protect his family's treat empire from rival breeds. A tale of loyalty, belly rubs, and offers that can't be refused. Now streaming in 4K with extra snoring sounds.</p>
+            <div class="hero-buttons">
+                <button class="btn btn-play">&#9658; Play</button>
+                <button class="btn btn-info">&#9432; More Info</button>
+            </div>
+        </div>
+        <div class="hero-fade"></div>
+    </section>
+
+    <!-- Content Rows -->
+    <section class="content-section">
+        <!-- Trending Now -->
+        <div class="row">
+            <h2 class="row-title">Trending Now <span class="explore">Explore All &#8250;</span></h2>
+            <div class="movies-container">
+                <div class="movie-card" onclick="openModal(0)">
+                    <img src="https://images.unsplash.com/photo-1529927066849-79b791a69825?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Pug Fiction</div>
+                        <div class="movie-meta">
+                            <span class="match">98% Match</span>
+                            <span class="rating">PG-13</span>
+                            <span>2h 34m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card" onclick="openModal(1)">
+                    <img src="https://images.unsplash.com/photo-1541364983171-a8ba01e95cfc?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">The Dark Pug Rises</div>
+                        <div class="movie-meta">
+                            <span class="match">95% Match</span>
+                            <span class="rating">PG-13</span>
+                            <span>2h 45m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card" onclick="openModal(2)">
+                    <img src="https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Jurassic Pug</div>
+                        <div class="movie-meta">
+                            <span class="match">92% Match</span>
+                            <span class="rating">PG</span>
+                            <span>2h 7m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card" onclick="openModal(3)">
+                    <img src="https://images.unsplash.com/photo-1575425186775-b8de9a427e67?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">The Pugshank Redemption</div>
+                        <div class="movie-meta">
+                            <span class="match">99% Match</span>
+                            <span class="rating">R</span>
+                            <span>2h 22m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card" onclick="openModal(4)">
+                    <img src="https://images.unsplash.com/photo-1521673461164-de300ebcfb17?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Avengers: Endpug</div>
+                        <div class="movie-meta">
+                            <span class="match">96% Match</span>
+                            <span class="rating">PG-13</span>
+                            <span>3h 1m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card" onclick="openModal(5)">
+                    <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Pug-neto</div>
+                        <div class="movie-meta">
+                            <span class="match">91% Match</span>
+                            <span class="rating">PG-13</span>
+                            <span>2h 11m</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top 10 -->
+        <div class="row top-10">
+            <h2 class="row-title">Top 10 in Pug Movies Today</h2>
+            <div class="movies-container" style="gap: 20px;">
+                <div class="movie-card">
+                    <span class="rank">1</span>
+                    <img src="https://images.unsplash.com/photo-1529927066849-79b791a69825?w=200&q=80" alt="Top 10">
+                </div>
+                <div class="movie-card">
+                    <span class="rank">2</span>
+                    <img src="https://images.unsplash.com/photo-1541364983171-a8ba01e95cfc?w=200&q=80" alt="Top 10">
+                </div>
+                <div class="movie-card">
+                    <span class="rank">3</span>
+                    <img src="https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=200&q=80" alt="Top 10">
+                </div>
+                <div class="movie-card">
+                    <span class="rank">4</span>
+                    <img src="https://images.unsplash.com/photo-1575425186775-b8de9a427e67?w=200&q=80" alt="Top 10">
+                </div>
+                <div class="movie-card">
+                    <span class="rank">5</span>
+                    <img src="https://images.unsplash.com/photo-1521673461164-de300ebcfb17?w=200&q=80" alt="Top 10">
+                </div>
+                <div class="movie-card">
+                    <span class="rank">6</span>
+                    <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?w=200&q=80" alt="Top 10">
+                </div>
+            </div>
+        </div>
+
+        <!-- Pug Comedies -->
+        <div class="row">
+            <h2 class="row-title">Pug Comedies <span class="explore">Explore All &#8250;</span></h2>
+            <div class="movies-container">
+                <div class="movie-card" onclick="openModal(6)">
+                    <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">The Hangover: Pug Edition</div>
+                        <div class="movie-meta">
+                            <span class="match">94% Match</span>
+                            <span class="rating">R</span>
+                            <span>1h 40m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card" onclick="openModal(7)">
+                    <img src="https://images.unsplash.com/photo-1535930891776-0c2dfb7fda1a?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Dumb and Pugger</div>
+                        <div class="movie-meta">
+                            <span class="match">87% Match</span>
+                            <span class="rating">PG-13</span>
+                            <span>1h 47m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card" onclick="openModal(8)">
+                    <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Pug Actually</div>
+                        <div class="movie-meta">
+                            <span class="match">90% Match</span>
+                            <span class="rating">R</span>
+                            <span>2h 15m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card" onclick="openModal(9)">
+                    <img src="https://images.unsplash.com/photo-1544568100-847a948585b9?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Home Alone: Pug's Revenge</div>
+                        <div class="movie-meta">
+                            <span class="match">93% Match</span>
+                            <span class="rating">PG</span>
+                            <span>1h 43m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1588943211346-0908a1fb0b01?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Puggy Gilmore</div>
+                        <div class="movie-meta">
+                            <span class="match">88% Match</span>
+                            <span class="rating">PG-13</span>
+                            <span>1h 32m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1583512603805-3cc6b41f3edb?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Superpug</div>
+                        <div class="movie-meta">
+                            <span class="match">85% Match</span>
+                            <span class="rating">R</span>
+                            <span>1h 53m</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Pugs -->
+        <div class="row">
+            <h2 class="row-title">Action-Packed Pug Adventures <span class="explore">Explore All &#8250;</span></h2>
+            <div class="movies-container">
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Mission Impugssible</div>
+                        <div class="movie-meta">
+                            <span class="match">97% Match</span>
+                            <span class="rating">PG-13</span>
+                            <span>2h 27m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1558788353-f76d92427f16?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">James Bone: Goldenpug</div>
+                        <div class="movie-meta">
+                            <span class="match">94% Match</span>
+                            <span class="rating">PG-13</span>
+                            <span>2h 10m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">The Pug Identity</div>
+                        <div class="movie-meta">
+                            <span class="match">92% Match</span>
+                            <span class="rating">PG-13</span>
+                            <span>1h 59m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1561037404-61cd46aa615b?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Die Hard with a Pug</div>
+                        <div class="movie-meta">
+                            <span class="match">96% Match</span>
+                            <span class="rating">R</span>
+                            <span>2h 12m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1477884213360-7e9d7dcc1e48?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Mad Max: Fury Pug</div>
+                        <div class="movie-meta">
+                            <span class="match">98% Match</span>
+                            <span class="rating">R</span>
+                            <span>2h 0m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1534361960057-19889db9621e?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Puginator 2</div>
+                        <div class="movie-meta">
+                            <span class="match">95% Match</span>
+                            <span class="rating">R</span>
+                            <span>2h 17m</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pug Dramas -->
+        <div class="row">
+            <h2 class="row-title">Critically Acclaimed Pug Dramas <span class="explore">Explore All &#8250;</span></h2>
+            <div class="movies-container">
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1523626797181-8c5ae80d40c2?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Schindler's Pug List</div>
+                        <div class="movie-meta">
+                            <span class="match">99% Match</span>
+                            <span class="rating">R</span>
+                            <span>3h 15m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1586671267731-da2cf3ceeb80?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Forrest Pug</div>
+                        <div class="movie-meta">
+                            <span class="match">97% Match</span>
+                            <span class="rating">PG-13</span>
+                            <span>2h 22m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1560807707-8cc77767d783?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">The Social Pugwork</div>
+                        <div class="movie-meta">
+                            <span class="match">94% Match</span>
+                            <span class="rating">PG-13</span>
+                            <span>2h 0m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1591769225440-811ad7d6eab3?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">A Beautiful Pug Mind</div>
+                        <div class="movie-meta">
+                            <span class="match">96% Match</span>
+                            <span class="rating">PG-13</span>
+                            <span>2h 15m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1525253086316-d0c936c814f8?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">The Pug of Wall Street</div>
+                        <div class="movie-meta">
+                            <span class="match">93% Match</span>
+                            <span class="rating">R</span>
+                            <span>2h 59m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1550165703-b0c3a6d19fd4?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Citizen Pug</div>
+                        <div class="movie-meta">
+                            <span class="match">98% Match</span>
+                            <span class="rating">PG</span>
+                            <span>1h 59m</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sci-Fi Pugs -->
+        <div class="row">
+            <h2 class="row-title">Sci-Fi Pug Adventures <span class="explore">Explore All &#8250;</span></h2>
+            <div class="movies-container">
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1583511655826-05700d52f4d9?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Star Paws: A New Hope</div>
+                        <div class="movie-meta">
+                            <span class="match">97% Match</span>
+                            <span class="rating">PG</span>
+                            <span>2h 1m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">The Pug-trix</div>
+                        <div class="movie-meta">
+                            <span class="match">96% Match</span>
+                            <span class="rating">R</span>
+                            <span>2h 16m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1510771463146-e89e6e86560e?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Interpugstellar</div>
+                        <div class="movie-meta">
+                            <span class="match">99% Match</span>
+                            <span class="rating">PG-13</span>
+                            <span>2h 49m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1592754862816-1a21a4ea2281?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Blade Pugger 2049</div>
+                        <div class="movie-meta">
+                            <span class="match">95% Match</span>
+                            <span class="rating">R</span>
+                            <span>2h 44m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1530041539828-114de669390e?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">E.T. the Extra-Pugrestrial</div>
+                        <div class="movie-meta">
+                            <span class="match">94% Match</span>
+                            <span class="rating">PG</span>
+                            <span>1h 55m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1568572933382-74d440642117?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Pug-ception</div>
+                        <div class="movie-meta">
+                            <span class="match">98% Match</span>
+                            <span class="rating">PG-13</span>
+                            <span>2h 28m</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2025 Award Weiners -->
+        <div class="row">
+            <h2 class="row-title">2025 Award Weiners <span class="explore">Explore All &#8250;</span></h2>
+            <div class="movies-container">
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Opugheimer</div>
+                        <div class="movie-meta">
+                            <span class="match">99% Match</span>
+                            <span class="rating">R</span>
+                            <span>3h 0m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1529927066849-79b791a69825?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Poor Pugs</div>
+                        <div class="movie-meta">
+                            <span class="match">97% Match</span>
+                            <span class="rating">R</span>
+                            <span>2h 21m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1541364983171-a8ba01e95cfc?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">The Holdovers: Pug Edition</div>
+                        <div class="movie-meta">
+                            <span class="match">96% Match</span>
+                            <span class="rating">R</span>
+                            <span>2h 13m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Anatomy of a Pug Fall</div>
+                        <div class="movie-meta">
+                            <span class="match">95% Match</span>
+                            <span class="rating">R</span>
+                            <span>2h 32m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1575425186775-b8de9a427e67?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Barkie</div>
+                        <div class="movie-meta">
+                            <span class="match">94% Match</span>
+                            <span class="rating">PG-13</span>
+                            <span>1h 54m</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <img src="https://images.unsplash.com/photo-1521673461164-de300ebcfb17?w=400&q=80" alt="Pug Movie">
+                    <div class="movie-info">
+                        <div class="movie-title">Killers of the Flower Pug</div>
+                        <div class="movie-meta">
+                            <span class="match">98% Match</span>
+                            <span class="rating">R</span>
+                            <span>3h 26m</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <div class="modal-hero" id="modal-hero">
+                <div class="modal-hero-fade"></div>
+                <div class="modal-hero-content">
+                    <h2 class="modal-hero-title" id="modal-title">Movie Title</h2>
+                    <div class="hero-buttons">
+                        <button class="btn btn-play">&#9658; Play</button>
+                        <button class="btn btn-info" style="background: transparent; border: 2px solid #fff;">+ My List</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="modal-details">
+                    <div class="modal-main">
+                        <div class="modal-meta">
+                            <span class="match" id="modal-match">98% Match</span>
+                            <span id="modal-year">2024</span>
+                            <span class="rating" id="modal-rating">PG-13</span>
+                            <span id="modal-duration">2h 34m</span>
+                            <span style="border: 1px solid #fff; padding: 0 5px; font-size: 0.7rem;">HD</span>
+                        </div>
+                        <p class="modal-description" id="modal-description">
+                            Movie description goes here...
+                        </p>
+                    </div>
+                    <div class="modal-sidebar">
+                        <p><span>Cast:</span> <span id="modal-cast">Pug McPugface, Sir Snortsalot, Lady Wrinkles</span></p>
+                        <p><span>Genres:</span> <span id="modal-genres">Comedy, Drama, Pug</span></p>
+                        <p><span>This movie is:</span> <span id="modal-mood">Heartwarming, Snore-inducing, Adorable</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="#">Audio Description</a>
+            <a href="#">Help Center</a>
+            <a href="#">Gift Cards</a>
+            <a href="#">Media Center</a>
+            <a href="#">Investor Relations</a>
+            <a href="#">Jobs</a>
+            <a href="#">Terms of Use</a>
+            <a href="#">Privacy</a>
+            <a href="#">Legal Notices</a>
+            <a href="#">Cookie Preferences</a>
+            <a href="#">Corporate Information</a>
+            <a href="#">Contact Us</a>
+        </div>
+        <p class="service-code">Service Code: PUG-2024-WOOF</p>
+        <p style="margin-top: 20px; font-size: 12px;">&copy; 2024 Pugflix, Inc. All pugs reserved.</p>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Movie data
+        const movies = [
+            {
+                title: "Pug Fiction",
+                description: "The lives of two pug hitmen, a boxer pug, a gangster's wife, and a pair of diner bandits intertwine in four tales of violence and redemption. Watch as they navigate the seedy underworld of Los Angeles, one belly rub at a time.",
+                image: "https://images.unsplash.com/photo-1529927066849-79b791a69825?w=1200&q=80",
+                match: "98%",
+                year: "1994",
+                rating: "R",
+                duration: "2h 34m",
+                cast: "John Pugvolta, Samuel L. Snackson, Uma Furman",
+                genres: "Crime, Drama, Pug Noir",
+                mood: "Quotable, Iconic, Treat-Obsessed"
+            },
+            {
+                title: "The Dark Pug Rises",
+                description: "Eight years after the events of The Dark Pug, a new threat emerges in Gotham City. Bruce Wayne must once again don the cape and pointy ears to protect his city from the masked villain known as Bane, a massive English Bulldog with a vendetta.",
+                image: "https://images.unsplash.com/photo-1541364983171-a8ba01e95cfc?w=1200&q=80",
+                match: "95%",
+                year: "2012",
+                rating: "PG-13",
+                duration: "2h 45m",
+                cast: "Christian Bale-y, Anne Hathapaw, Tom Hardy Pug",
+                genres: "Action, Superhero, Pug Justice",
+                mood: "Epic, Dark, Wrinkle-Faced"
+            },
+            {
+                title: "Jurassic Pug",
+                description: "Scientists discover ancient pug DNA preserved in amber and decide to clone prehistoric pugs. When the security systems fail, visitors must survive when the pugs are unleashed. Spoiler: everyone just wants to pet them.",
+                image: "https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=1200&q=80",
+                match: "92%",
+                year: "1993",
+                rating: "PG",
+                duration: "2h 7m",
+                cast: "Jeff Goldpug, Laura Dern-dog, Sam Neill Pug",
+                genres: "Sci-Fi, Adventure, Prehistoric Pugs",
+                mood: "Thrilling, Snorty, Groundbreaking"
+            },
+            {
+                title: "The Pugshank Redemption",
+                description: "Wrongly convicted of murder, a pug named Andy befriends a fellow pug named Red in the harsh pet shelter. Over twenty years, Andy never loses hope and eventually orchestrates an incredible escape using a tunnel hidden behind a poster of a tennis ball.",
+                image: "https://images.unsplash.com/photo-1575425186775-b8de9a427e67?w=1200&q=80",
+                match: "99%",
+                year: "1994",
+                rating: "R",
+                duration: "2h 22m",
+                cast: "Tim Puggins, Morgan Freemutt, Bob Gundog",
+                genres: "Drama, Prison, Pug Hope",
+                mood: "Inspiring, Emotional, Friendship Goals"
+            },
+            {
+                title: "Avengers: Endpug",
+                description: "After Thanos the Great Dane snapped away half of all treats, the remaining Avenpugs must travel through time to collect the Infinity Bones and restore balance to the universe. One final battle to save all pupkind.",
+                image: "https://images.unsplash.com/photo-1521673461164-de300ebcfb17?w=1200&q=80",
+                match: "96%",
+                year: "2019",
+                rating: "PG-13",
+                duration: "3h 1m",
+                cast: "Robert Downey Pug Jr., Chris Evansdog, Scarlett Johoundson",
+                genres: "Action, Superhero, Pug Ensemble",
+                mood: "Epic, Emotional, Satisfying"
+            },
+            {
+                title: "Pug-neto",
+                description: "After a tragic accident at a dog park, mild-mannered pug Erik discovers he has the ability to control all metal objects. Now he must choose between vengeance and becoming a hero. Mostly he just uses it to open treat containers.",
+                image: "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=1200&q=80",
+                match: "91%",
+                year: "2020",
+                rating: "PG-13",
+                duration: "2h 11m",
+                cast: "Michael Fassbendpug, James McApaw, Jennifer Pawrence",
+                genres: "Action, Sci-Fi, Mutant Pugs",
+                mood: "Powerful, Conflicted, Magnetic"
+            },
+            {
+                title: "The Hangover: Pug Edition",
+                description: "Three pugs wake up in a Las Vegas hotel suite with no memory of the previous night, a missing groom, and a chicken in the bathroom. They must retrace their steps to find their friend before the wedding.",
+                image: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=1200&q=80",
+                match: "94%",
+                year: "2009",
+                rating: "R",
+                duration: "1h 40m",
+                cast: "Bradley Pupper, Zach Galifianakis-pug, Ed Helmspug",
+                genres: "Comedy, Adventure, Vegas Pugs",
+                mood: "Hilarious, Chaotic, Unforgettable"
+            },
+            {
+                title: "Dumb and Pugger",
+                description: "Two incredibly dim-witted pugs embark on a cross-country road trip to return a briefcase full of treats to its rightful owner. Along the way, they get into increasingly ridiculous situations involving squeaky toys.",
+                image: "https://images.unsplash.com/photo-1535930891776-0c2dfb7fda1a?w=1200&q=80",
+                match: "87%",
+                year: "1994",
+                rating: "PG-13",
+                duration: "1h 47m",
+                cast: "Jim Pugrey, Jeff Pawniels, Lauren Howlly",
+                genres: "Comedy, Road Trip, Silly Pugs",
+                mood: "Stupid Funny, Quotable, Classic"
+            },
+            {
+                title: "Pug Actually",
+                description: "Nine intertwined stories examine the complexities of love during the holidays through the eyes of various pugs in London. Features the iconic scene where a pug holds up cue cards declaring his love for treats.",
+                image: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=1200&q=80",
+                match: "90%",
+                year: "2003",
+                rating: "R",
+                duration: "2h 15m",
+                cast: "Hugh Grantpug, Emma Pugson, Alan Rickpug",
+                genres: "Romance, Comedy, Holiday Pugs",
+                mood: "Heartwarming, Festive, Romantic"
+            },
+            {
+                title: "Home Alone: Pug's Revenge",
+                description: "When an 8-year-old pug is accidentally left behind while his family flies to Paris for Christmas, he must defend his home from two bumbling burglars using an elaborate series of booby traps and adorable head tilts.",
+                image: "https://images.unsplash.com/photo-1544568100-847a948585b9?w=1200&q=80",
+                match: "93%",
+                year: "1990",
+                rating: "PG",
+                duration: "1h 43m",
+                cast: "Macaulay Pugkin, Joe Pesci-paw, Daniel Sterndog",
+                genres: "Comedy, Family, Holiday Pugs",
+                mood: "Festive, Clever, Family Fun"
+            }
+        ];
+
+        // Modal functions
+        function openModal(index) {
+            const movie = movies[index];
+            document.getElementById('modal-title').textContent = movie.title;
+            document.getElementById('modal-description').textContent = movie.description;
+            document.getElementById('modal-hero').style.backgroundImage = `linear-gradient(to right, rgba(24,24,24,0.9) 0%, rgba(24,24,24,0.4) 100%), url('${movie.image}')`;
+            document.getElementById('modal-match').textContent = movie.match + ' Match';
+            document.getElementById('modal-year').textContent = movie.year;
+            document.getElementById('modal-rating').textContent = movie.rating;
+            document.getElementById('modal-duration').textContent = movie.duration;
+            document.getElementById('modal-cast').textContent = movie.cast;
+            document.getElementById('modal-genres').textContent = movie.genres;
+            document.getElementById('modal-mood').textContent = movie.mood;
+            document.getElementById('modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on outside click
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('modal')) {
+                closeModal();
+            }
+        });
+
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
